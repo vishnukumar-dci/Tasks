@@ -1,4 +1,4 @@
-const UserDB = require('../models/userSchema')
+const UserDB = require('../model/userSchema')
 const bcrypt = require('bcrypt')
 const generateTokens = require('../utils/generateTokens')
 const jwt = require('jsonwebtoken')
@@ -134,5 +134,7 @@ const generateAccessToken = async(req,res) =>{
         
     }
 }
+
+
 
 module.exports = {createUser,deleteUser,updateUser,getUser,loginUser,generateAccessToken};

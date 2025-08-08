@@ -1,4 +1,4 @@
-const UserDB = require('../models/itemSchema')
+const UserDB = require('../model/itemSchema')
 
 const createItem = async (req, res) => {
     if (!req.body.name) {
@@ -92,7 +92,7 @@ const updateItem =  async (req, res) => {
 }
 
 const deleteItem =  async (req, res) => {
-    const id = req.params
+    const id = req.params.id
     if (!id) {
         return res.status(400).json({ message: 'item Id is require' })
     }
