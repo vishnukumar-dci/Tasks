@@ -1,8 +1,13 @@
 const express = require('express')
 const userController = require('../controller/userController')
 const router = express.Router()
+const multer = require('multer')
 const { body,param } = require('express-validator')
 const authentication = require('../middleware/authUser')
+const images = require('../controller/userImages')
+
+const storage = multer.memoryStorage()
+const upload = multer({storage})
 
 //registration
 router.post('/register',
@@ -55,6 +60,16 @@ router.post('/refreshtoken',
         body('refreshToken').trim().notEmpty().withMessage('Must contain a value')
     ],
     authentication.validateInputs, authentication.validateRefreshToken, userController.generateAccessToken)
+
+// Image Upload Mongodb
+router.post('/profile/:id',upload.single('profilePicture'),images.imageUpload)
+
+//Retrive Image Mongodb
+router.get('/retrieve/:id',images.imageRetrieval)
+
+router.post('/chunk',images.imageChunk)
+
+router.post('/merge',images.imageMerge)
 
 module.exports = router;
 

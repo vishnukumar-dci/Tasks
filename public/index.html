@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Gemini Chatbot</title>
+  <title>Chatbot</title>
   <style>
     * {
       box-sizing: border-box;
@@ -10,95 +10,112 @@
 
     body {
       font-family: Arial, sans-serif;
-      padding: 0;
       margin: 0;
-      background: #f4f4f4;
+      background: #1e1e1e;
+      color: #fff;
       height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: stretch;
     }
 
     #chat-container {
       width: 100%;
-      max-width: 600px;
-      height: 90vh;
-      background: white;
+      max-width: 800px;
       display: flex;
       flex-direction: column;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
+      background-color: #2d2d2d;
     }
 
     #messages {
       flex: 1;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      /* justify-content: flex-end; */
       padding: 20px;
+      scroll-behavior: smooth;
     }
 
     .message {
       margin-bottom: 10px;
+      display: flex;
     }
 
     .user {
-      text-align: right;
-    }
-
-    .user .message-bubble {
-      display: inline-block;
-      background: #d0ebff;
-      padding: 10px 15px;
-      border-radius: 20px;
-      max-width: 80%;
-      word-wrap: break-word;
+      justify-content: flex-end;
     }
 
     .bot {
-      text-align: left;
+      justify-content: flex-start;
+    }
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 75%;
+      line-height: 1.4;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .user .message-bubble {
+      background-color: #0b93f6;
+      color: white;
+      border-bottom-right-radius: 0;
     }
 
     .bot .message-bubble {
-      display: inline-block;
-      background: #e9ecef;
-      padding: 10px 15px;
-      border-radius: 20px;
-      max-width: 80%;
-      word-wrap: break-word;
+      background-color: #3a3a3a;
+      color: white;
+      border-bottom-left-radius: 0;
     }
 
     #input-section {
       display: flex;
-      border-radius: 1px solid #ccc;
-      padding:10px;
-      margin:5px;
+      padding: 15px;
+      border-top: 1px solid #444;
+      background-color: #2d2d2d;
     }
 
     #user-input {
       flex: 1;
-      padding: 10px;
-      font-size: 16px;
+      padding: 12px;
+      border-radius: 8px;
       border: none;
       outline: none;
+      font-size: 16px;
+      background-color: #3a3a3a;
+      color: #fff;
     }
 
     #send-button {
-      padding: 10px 20px;
-      background: #007bff;
+      margin-left: 10px;
+      padding: 12px 20px;
+      background-color: #0b93f6;
       color: white;
       border: none;
+      border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
     }
 
     #send-button:hover {
-      background: #0056b3;
+      background-color: #0078cc;
+    }
+    #Heading{
+      display: flex;
+      justify-content: center;
+      margin:20;
+      padding: 12px;
     }
   </style>
 </head>
 <body>
 
 <div id="chat-container">
-  <div id="messages"></div>
+  <div id="Heading">Chat Bot</div>
+  <div id="messages" id="scroll-container"></div>
 
   <div id="input-section">
     <input type="text" id="user-input" placeholder="Type your message..." />
@@ -132,7 +149,7 @@
       inputField.value = "";
 
       try {
-        const response = await fetch("/geminichats", {
+        const response = await fetch("/gemini/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt: userInput })
