@@ -12,7 +12,7 @@ const PORT = 8088
 
 app.use(express.json({limit:'5mb'}))
 app.use(cors())
-// app.use(express.static("public"))
+app.use(express.static("public"))
 
 app.use('/items',itemRoutes)
 app.use('/user',userRouter)
@@ -27,4 +27,4 @@ mongoose.connect(process.env.MONGO_URI)
 })
 .catch((err)=>{
     console.log(err)
-})
+}) 

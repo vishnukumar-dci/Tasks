@@ -1,10 +1,11 @@
 const express = require('express')
-const userController = require('../controller/userController')
-const router = express.Router()
 const multer = require('multer')
+const router = express.Router()
+const userController = require('../controller/userController')
 const { body,param } = require('express-validator')
 const authentication = require('../middleware/authUser')
-const images = require('../controller/userImages')
+const chunk = require('../controller/chunkImage')
+const images = require('../controller/profilepicture')
 
 const storage = multer.memoryStorage()
 const upload = multer({storage})
@@ -61,15 +62,20 @@ router.post('/refreshtoken',
     ],
     authentication.validateInputs, authentication.validateRefreshToken, userController.generateAccessToken)
 
-// Image Upload Mongodb
-router.post('/profile/:id',upload.single('profilePicture'),images.imageUpload)
+// Image Upload Mongodb single shot
+router.post('/profile',upload.single('picture'),authentication.validateToken,images.imageUpload)
 
-//Retrive Image Mongodb
-router.get('/retrieve/:id',images.imageRetrieval)
+// Upload image as chunks
+router.post('/chunk',authentication.validateToken,chunk.imageChunk)
 
-router.post('/chunk',images.imageChunk)
+router.post('/merge',authentication.validateToken,chunk.imageMerge)
 
-router.post('/merge',images.imageMerge)
+router.get('/imageurl/',authentication.validateToken,images.imageRetrievalLink)
+router.get('/retrieve/:email',images.imageRetrieval)
+
+router.put('/profileupdate',upload.single('profile'),authentication.validateToken,images.imageUpdate)
+
+router.delete('/profiledelete',authentication.validateToken,images.imageDelete)
 
 module.exports = router;
 

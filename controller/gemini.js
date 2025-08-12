@@ -1,7 +1,6 @@
 const dotenv = require('dotenv')
 dotenv.config()
-const fs = require('fs')
-const {GoogleGenerativeAI,GoogleGenAI,Modality} = require('@google/generative-ai')
+const {GoogleGenerativeAI} = require('@google/generative-ai')
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY)
 
@@ -10,9 +9,7 @@ const chat = model.startChat({history:[]})
 
 const geminiAI = async(req,res) => {
     const {prompt} = req.body
-    console.log(prompt)
     try{
-
     const result = await chat.sendMessage(prompt)
     const response = await result.response
     const text = response.text()

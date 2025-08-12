@@ -149,7 +149,7 @@
       inputField.value = "";
 
       try {
-        const response = await fetch("/gemini/chat", {
+        const response = await fetch("/gemini/chats", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt: userInput })
