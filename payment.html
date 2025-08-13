@@ -1,0 +1,38 @@
+<script src="https://js.stripe.com/v3/"></script>
+<button id="checkout-btn" disabled>Pay Now</button>
+
+<script>
+  const stripe = Stripe("pk_test_XXXXXXXXXXXXXXXX"); // Your publishable key
+
+  async function checkGooglePay() {
+    const paymentRequest = stripe.paymentRequest({
+      country: 'IN',
+      currency: 'inr',
+      total: { label: 'Test Product', amount: 5000 },
+    });
+
+    const result = await paymentRequest.canMakePayment();
+
+    if (result && result.googlePay) {
+      console.log("✅ Google Pay is available!");
+    } else {
+      console.log("❌ Google Pay not available — will show card only.");
+    }
+
+    // Enable button after check
+    document.getElementById("checkout-btn").disabled = false;
+  }
+
+  checkGooglePay();
+
+  document.getElementById("checkout-btn").addEventListener("click", async () => {
+    const res = await fetch("http://localhost:8088/payment/createcheckout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: "1" }) // example productId
+    });
+
+    const data = await res.json();
+    window.location.href = data.url; // redirect to Checkout
+  });
+</script>

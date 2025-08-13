@@ -1,20 +1,58 @@
-<!DOCTYPE html>
 <html>
 <head>
   <title>Products</title>
+  <style>
+    span{
+      padding: 10px;
+    }
+    .product { border: 1px solid #ccc; padding: 20px; margin: 10px ; width: 150px; }
+    .quantity-controls { display: flex; align-items: center; }
+    .quantity-controls button { width: 30px; height: 30px;  }
+    .cart-total { position: fixed; bottom: 0; left: 0; width: 100%; background: #f0f0f0; padding: 15px; border-top: 1px solid #ccc; }
+  </style>
 </head>
 <body>
   <h1>Products</h1>
-  <% products.forEach(product => { %>
-    <div>
-      <h2><%= product.name %></h2>
-      <p><%= product.description %></p>
-      <p>Price: ₹<%= product.price.toFixed(2) %></p>
-      <form action="/payment/createcheckout" method="POST">
-        <input type="hidden" name="productId" value="<%= product.id %>">
-        <button type="submit">Buy Now</button>
-      </form>
-    </div>
-  <% }) %>
+
+  <div id="products">
+    <% products.forEach(product => { %>
+      <div class="product" data-id="<%= product.id %>">
+        <h2><%= product.name %></h2>
+        <p><%= product.description %></p>
+        <p>Price: ₹<%= product.price.toFixed(2) %></p>
+
+        <div class="quantity-controls">
+          <button type="button" onclick="updateQuantity('<%= product.id %>', -1)">-</button>
+          <span id="qty-<%= product.id %>">0</span>
+          <button type="button" onclick="updateQuantity('<%= product.id %>', 1)">+</button>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="cart-total">
+    <form id="checkout-form" action="/payment/createcheckout" method="POST">
+      <input type="hidden" name="cartData" id="cartData">
+      <button type="submit" id="payNow" disabled>Pay Now</button>
+    </form>
+  </div>
+
+  <script>
+    let cart = {};
+
+    function updateQuantity(productId, change) {
+      if (!cart[productId]) cart[productId] = { qty: 0 };
+      cart[productId].qty += change;
+      if (cart[productId].qty < 0) cart[productId].qty = 0;
+
+      document.getElementById(`qty-${productId}`).innerText = cart[productId].qty;
+
+      document.getElementById('payNow').disabled = Object.values(cart).every(item => item.qty === 0);
+    }
+
+    document.getElementById('checkout-form').addEventListener('submit', function() {
+      document.getElementById('cartData').value = JSON.stringify(cart);
+    });
+  </script>
 </body>
 </html>
